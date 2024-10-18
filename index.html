@@ -81,15 +81,22 @@
             const urlInput = document.getElementById('urlInput').value;
             const uniqueCode = generateUniqueCode(6); // 6 অক্ষরের ইউনিক কোড
 
-            // URL এবং ইউনিক কোড ফায়ারবেসে সংরক্ষণ
-            await set(ref(db, 'urls/' + uniqueCode), {
-                originalUrl: urlInput,
-                uniqueCode: uniqueCode
-            });
+            try {
+                // URL এবং ইউনিক কোড ফায়ারবেসে সংরক্ষণ
+                await set(ref(db, 'urls/' + uniqueCode), {
+                    originalUrl: urlInput,
+                    uniqueCode: uniqueCode
+                });
+                console.log("Data saved successfully!"); // সফল লগ
+            } catch (error) {
+                console.error("Error saving data:", error); // ত্রুটি লগ
+            }
 
             const shortenedUrl = `www.urls.com?=${uniqueCode}`;
             document.getElementById('result').textContent = `শর্ট লিংক: ${shortenedUrl}`;
             document.getElementById('shortenedLink').value = shortenedUrl; // কপি করার জন্য ইনপুটে সেট করা
+            document.getElementById('shortenedLink').style.display = 'block'; // ইনপুট দেখান
+            document.getElementById('copyButton').style.display = 'block'; // কপি বাটন দেখান
         }
 
         function copyToClipboard() {
@@ -109,21 +116,5 @@
         <input type="text" id="shortenedLink" readonly style="margin-top: 10px; display: none;">
         <button onclick="copyToClipboard()" style="display: none;" id="copyButton">কপি করুন</button>
     </div>
-    <script>
-        // কপি করার অপশন শো করার জন্য
-        function showCopyButton() {
-            const resultDiv = document.getElementById('result');
-            const copyButton = document.getElementById('copyButton');
-            const shortenedLink = document.getElementById('shortenedLink');
-
-            if (resultDiv.textContent) {
-                shortenedLink.style.display = 'block';
-                copyButton.style.display = 'block';
-            }
-        }
-
-        document.getElementById('result').addEventListener('DOMSubtreeModified', showCopyButton);
-    </script>
 </body>
-  </html>
-  
+</html>
