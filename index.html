@@ -70,7 +70,7 @@
         const transactionRef = ref(db, 'urls/' + transactionId);
         set(transactionRef, transactionData)
           .then(() => {
-            const transactionUrl = `http://localhost:7700/link.html?id=${transactionId}`;
+            const transactionUrl = `http://url.00004.top/link.html?id=${transactionId}`;
             document.getElementById('url').textContent = transactionUrl;
             document.getElementById('transactionUrl').style.display = 'block'; // Show the URL section
           })
