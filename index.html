@@ -1,120 +1,98 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL শর্টনার</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 15px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        .shortened-url {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-    </style>
-    <script type="module">
-        import { initializeApp } from "firebase/app";
-        import { getDatabase, ref, set } from "firebase/database";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDXDZ71N0lpmWjLU8Qt7f_3CDdwyRwow6I",
-            authDomain: "phdpro-eafc7.firebaseapp.com",
-            databaseURL: "https://phdpro-eafc7-default-rtdb.firebaseio.com",
-            projectId: "phdpro-eafc7",
-            storageBucket: "phdpro-eafc7.appspot.com",
-            messagingSenderId: "715970302693",
-            appId: "1:715970302693:web:436318590f7b4a75b5fa0c",
-            measurementId: "G-JKVFGC5KHR"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        function generateUniqueCode(length) {
-            const charset = 'abcdefghijklmnopqrstuvwxyz';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += charset.charAt(Math.floor(Math.random() * charset.length));
-            }
-            return result;
-        }
-
-        async function shortenUrl() {
-            const urlInput = document.getElementById('urlInput').value;
-            const uniqueCode = generateUniqueCode(6); // 6 অক্ষরের ইউনিক কোড
-
-            try {
-                // URL এবং ইউনিক কোড ফায়ারবেসে সংরক্ষণ
-                await set(ref(db, 'urls/' + uniqueCode), {
-                    originalUrl: urlInput,
-                    uniqueCode: uniqueCode
-                });
-                console.log("Data saved successfully!"); // সফল লগ
-            } catch (error) {
-                console.error("Error saving data:", error); // ত্রুটি লগ
-            }
-
-            const shortenedUrl = `www.urls.com?=${uniqueCode}`;
-            document.getElementById('result').textContent = `শর্ট লিংক: ${shortenedUrl}`;
-            document.getElementById('shortenedLink').value = shortenedUrl; // কপি করার জন্য ইনপুটে সেট করা
-            document.getElementById('shortenedLink').style.display = 'block'; // ইনপুট দেখান
-            document.getElementById('copyButton').style.display = 'block'; // কপি বাটন দেখান
-        }
-
-        function copyToClipboard() {
-            const shortenedLink = document.getElementById('shortenedLink');
-            shortenedLink.select();
-            document.execCommand('copy');
-            alert('শর্ট লিংক কপি করা হয়েছে!');
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Link</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    input[type="text"], button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 300px;
+    }
+    #transactionUrl {
+      margin-top: 20px;
+      display: none; /* Initially hidden */
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>URL শর্টনার</h1>
-        <input type="text" id="urlInput" placeholder="আপনার লিংক এখানে দিন" required>
-        <button onclick="shortenUrl()">শর্ট করুন</button>
-        <div class="shortened-url" id="result"></div>
-        <input type="text" id="shortenedLink" readonly style="margin-top: 10px; display: none;">
-        <button onclick="copyToClipboard()" style="display: none;" id="copyButton">কপি করুন</button>
-    </div>
+
+  <h2>Create Link</h2>
+  <input type="text" id="userLink" placeholder="Enter your link here">
+  <button id="createBtn">Create Link</button>
+  
+  <div id="transactionUrl">
+    <p><strong>URL:</strong> <span id="url"></span></p>
+    <button id="copyBtn">Copy Link</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXDZ71N0lpmWjLU8Qt7f_3CDdwyRwow6I",
+      authDomain: "phdpro-eafc7.firebaseapp.com",
+      databaseURL: "https://phdpro-eafc7-default-rtdb.firebaseio.com",
+      projectId: "phdpro-eafc7",
+      storageBucket: "phdpro-eafc7.appspot.com",
+      messagingSenderId: "715970302693",
+      appId: "1:715970302693:web:4765e165006f7ce4b5fa0c",
+      measurementId: "G-BD78RJ12R2"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Create transaction
+    document.getElementById('createBtn').addEventListener('click', () => {
+      const link = document.getElementById('userLink').value;
+      if (link) {
+        const transactionId = Math.random().toString(36).substring(2, 7); // 5 অক্ষরের আইডি
+        const transactionData = {
+          id: transactionId,
+          link: link,
+          status: 'pending',
+          date: new Date().toISOString(),
+        };
+
+        // Save to Firebase
+        const transactionRef = ref(db, 'urls/' + transactionId);
+        set(transactionRef, transactionData)
+          .then(() => {
+            const transactionUrl = `http://localhost:7700/link.html?id=${transactionId}`;
+            document.getElementById('url').textContent = transactionUrl;
+            document.getElementById('transactionUrl').style.display = 'block'; // Show the URL section
+          })
+          .catch((error) => {
+            console.error("Error creating transaction:", error);
+          });
+      } else {
+        alert('Please enter a link!');
+      }
+    });
+
+    // Copy link functionality
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const linkToCopy = document.getElementById('url').textContent;
+      navigator.clipboard.writeText(linkToCopy).then(() => {
+        alert('Link copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    });
+
+  </script>
+
 </body>
 </html>
