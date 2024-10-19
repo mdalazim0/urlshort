@@ -35,90 +35,64 @@
     <button id="copyBtn">Copy Link</button>
   </div>
 
-  
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDXDZ71N0lpmWjLU8Qt7f_3CDdwyRwow6I",
-    authDomain: "phdpro-eafc7.firebaseapp.com",
-    databaseURL: "https://phdpro-eafc7-default-rtdb.firebaseio.com",
-    projectId: "phdpro-eafc7",
-    storageBucket: "phdpro-eafc7.appspot.com",
-    messagingSenderId: "715970302693",
-    appId: "1:715970302693:web:4765e165006f7ce4b5fa0c",
-    measurementId: "G-BD78RJ12R2"
-  };
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXDZ71N0lpmWjLU8Qt7f_3CDdwyRwow6I",
+      authDomain: "phdpro-eafc7.firebaseapp.com",
+      databaseURL: "https://phdpro-eafc7-default-rtdb.firebaseio.com",
+      projectId: "phdpro-eafc7",
+      storageBucket: "phdpro-eafc7.appspot.com",
+      messagingSenderId: "715970302693",
+      appId: "1:715970302693:web:4765e165006f7ce4b5fa0c",
+      measurementId: "G-BD78RJ12R2"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  // Create transaction
-  document.getElementById('createBtn').addEventListener('click', () => {
-    let link = document.getElementById('userLink').value.trim();
+    // Create transaction
+    document.getElementById('createBtn').addEventListener('click', () => {
+      const link = document.getElementById('userLink').value;
+      if (link) {
+        const transactionId = Math.random().toString(36).substring(2, 7); // 5 অক্ষরের আইডি
+        const transactionData = {
+          id: transactionId,
+          link: link,
+          status: 'pending',
+          date: new Date().toISOString(),
+        };
 
-    // Automatically add http:// if it's missing
-    if (!link.startsWith('http://') && !link.startsWith('https://')) {
-      link = 'http://' + link;
-    }
-
-    if (link) {
-      // Check if the link already exists
-      const dbRef = ref(db);
-      get(child(dbRef, `urls`)).then((snapshot) => {
-        let existingTransaction = null;
-        
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
-          if (data.link === link) {
-            existingTransaction = data;
-          }
-        });
-
-        if (existingTransaction) {
-          // If link exists, show existing URL
-          alert(`Transaction already exists! You can access it here: http://yourwebsite.com/link.html?id=${existingTransaction.id}`);
-        } else {
-          // Create new transaction
-          const transactionId = Math.random().toString(36).substring(2, 7); // 5-character ID
-          const transactionData = {
-            id: transactionId,
-            link: link,
-            status: 'pending',
-            date: new Date().toISOString(),
-          };
-
-          // Save to Firebase under 'urls' node
-          const transactionRef = ref(db, 'urls/' + transactionId);
-          set(transactionRef, transactionData)
-            .then(() => {
-              const transactionUrl = `http://url.00004.top/link.html?id=${transactionId}`;
-              document.getElementById('url').textContent = transactionUrl;
-              document.getElementById('transactionUrl').style.display = 'block'; // Show the URL section
-            })
-            .catch((error) => {
-              console.error("Error creating transaction:", error);
-            });
-        }
-      });
-    } else {
-      alert('Please enter a link!');
-    }
-  });
-
-  // Copy link functionality
-  document.getElementById('copyBtn').addEventListener('click', () => {
-    const linkToCopy = document.getElementById('url').textContent;
-    navigator.clipboard.writeText(linkToCopy).then(() => {
-      alert('Link copied to clipboard!');
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
+        // Save to Firebase
+        const transactionRef = ref(db, 'urls/' + transactionId);
+        set(transactionRef, transactionData)
+          .then(() => {
+            const transactionUrl = `http://url.00004.top/link.html?id=${transactionId}`;
+            document.getElementById('url').textContent = transactionUrl;
+            document.getElementById('transactionUrl').style.display = 'block'; // Show the URL section
+          })
+          .catch((error) => {
+            console.error("Error creating transaction:", error);
+          });
+      } else {
+        alert('Please enter a link!');
+      }
     });
-  });
-</script>
+
+    // Copy link functionality
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const linkToCopy = document.getElementById('url').textContent;
+      navigator.clipboard.writeText(linkToCopy).then(() => {
+        alert('Link copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    });
+
+  </script>
 
 </html>
-
