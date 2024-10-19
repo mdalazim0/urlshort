@@ -55,10 +55,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     
-// Automatically add http:// if it's missing
-    if (!link.startsWith('http://') && !link.startsWith('https://')) {
-      link = 'http://' + link;
-                                                        }
     // Create transaction
     document.getElementById('createBtn').addEventListener('click', () => {
       const link = document.getElementById('userLink').value;
