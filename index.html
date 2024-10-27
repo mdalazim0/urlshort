@@ -58,7 +58,13 @@
 
         // Handle URL shortening
         document.getElementById('createBtn').addEventListener('click', () => {
-            const link = document.getElementById('userLink').value;
+            let link = document.getElementById('userLink').value;
+
+            // Check if the link starts with http:// or https://
+            if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                link = 'http://' + link; // Default to http://
+            }
+
             if (link) {
                 const shortCode = Math.random().toString(36).substring(2, 7); // 5 character code
                 const transactionData = {
