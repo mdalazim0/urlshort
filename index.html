@@ -72,7 +72,7 @@
                 const transactionRef = ref(db, 'urls/' + shortCode);
                 set(transactionRef, transactionData)
                     .then(() => {
-                        const shortUrl = `http://url.00004.top?=${shortCode}`; // Use your actual domain
+                        const shortUrl = `http://url.00004.top?id=${shortCode}`; // Use your actual domain
                         document.getElementById('url').textContent = shortUrl;
                         document.getElementById('shortUrl').style.display = 'block'; // Show the URL section
                     })
@@ -96,7 +96,7 @@
 
         // Redirect if a short code is present in the URL
         const urlParams = new URLSearchParams(window.location.search);
-        const shortCode = urlParams.get('='); // Get the code from the query parameter
+        const shortCode = urlParams.get('id'); // Get the code from the query parameter
 
         if (shortCode) {
             console.log('Short code:', shortCode); // Log the short code
