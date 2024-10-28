@@ -100,7 +100,7 @@
                 const transactionRef = ref(db, 'urls/' + shortCode);
                 set(transactionRef, transactionData)
                     .then(() => {
-                        const shortUrl = `http://url.00004.top?id=${shortCode}`; // Use your actual domain
+                        const shortUrl = `http://yourdomain.com/index.html?id=${shortCode}`; // Use your actual domain
                         document.getElementById('url').textContent = shortUrl;
                         document.getElementById('shortUrl').style.display = 'block'; // Show the URL section
                     })
@@ -134,7 +134,7 @@
                     const link = transaction.link;
 
                     // Directly redirect to the provided link
-                    window.location.href = link;
+                    window.location.replace(link); // Use replace to avoid leaving history
 
                 } else {
                     document.body.innerHTML = '<h2>Short URL not found!</h2>';
