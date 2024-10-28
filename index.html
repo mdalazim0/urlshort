@@ -7,21 +7,43 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            margin: 0;
             padding: 20px;
+        }
+        h2 {
+            color: #333;
         }
         input[type="text"], button {
             margin: 10px 0;
             padding: 10px;
             width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
         }
         #shortUrl {
             margin-top: 20px;
-            display: none; /* Initially hidden */
+            display: none;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 320px;
+            text-align: center;
         }
     </style>
 </head>
@@ -105,14 +127,13 @@
         const shortCode = urlParams.get('id'); // Get the code from the query parameter
 
         if (shortCode) {
-            console.log('Short code:', shortCode); // Log the short code
             const transactionRef = ref(db, 'urls/' + shortCode);
             get(transactionRef).then((snapshot) => {
                 if (snapshot.exists()) {
                     const transaction = snapshot.val();
                     const link = transaction.link;
 
-                    // Redirect to the provided link
+                    // Directly redirect to the provided link
                     window.location.href = link;
 
                 } else {
@@ -123,7 +144,6 @@
                 console.error('Error fetching short URL:', error);
             });
         }
-
     </script>
 
 </body>
