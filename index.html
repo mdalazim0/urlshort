@@ -60,7 +60,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -100,7 +100,7 @@
                 const transactionRef = ref(db, 'urls/' + shortCode);
                 set(transactionRef, transactionData)
                     .then(() => {
-                        const shortUrl = `http://url.00004.top?id=${shortCode}`; // Use your actual domain
+                        const shortUrl = `http://url.00004.top/redirect.php?id=${shortCode}`; // Use your actual domain
                         document.getElementById('url').textContent = shortUrl;
                         document.getElementById('shortUrl').style.display = 'block'; // Show the URL section
                     })
@@ -121,29 +121,6 @@
                 console.error('Failed to copy: ', err);
             });
         });
-
-        // Redirect if a short code is present in the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const shortCode = urlParams.get('id'); // Get the code from the query parameter
-
-        if (shortCode) {
-            const transactionRef = ref(db, 'urls/' + shortCode);
-            get(transactionRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const transaction = snapshot.val();
-                    const link = transaction.link;
-
-                    // Directly redirect to the provided link
-                    window.location.href = link;
-
-                } else {
-                    document.body.innerHTML = '<h2>Short URL not found!</h2>';
-                }
-            }).catch((error) => {
-                document.body.innerHTML = '<h2>Error fetching short URL!</h2>';
-                console.error('Error fetching short URL:', error);
-            });
-        }
     </script>
 
 </body>
